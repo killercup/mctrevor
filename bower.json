@@ -1,0 +1,24 @@
+{
+  "name": "mctrevor",
+  "version": "0.0.1",
+  "authors": [
+    "Pascal Hertleif <killercup@gmail.com>"
+  ],
+  "description": "CMS using Sir Trevor JS",
+  "keywords": [
+    "CMS"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "sir-trevor-js": "~0.3.2",
+    "bootswatch": "~3.0.3+1"
+  }
+}

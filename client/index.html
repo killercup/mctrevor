@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello, Trevor</title>
+  <% css.forEach(function (file) { %>
+  <link rel="stylesheet" href="<%= file %>"><% }); %>
+</head>
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand">MC Trevor</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="jumbotron" id="loading">
+      <p>Loading&hellip;</p>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div id="pages" class="list-group"></div>
+      </div>
+      <div class="col-lg-8">
+        <form id="trevor" class="hidden">
+          <p>
+            <a href="#/save" class="btn btn-primary save">Save</a>
+          </p>
+          <textarea id="trevor-instance"></textarea>
+          <p>
+            <a href="#/save" class="btn btn-primary save">Save</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+  <% js.forEach(function (file) { %>
+  <script src="<%= file %>"></script><% }); %>
+</body>
+</html>
