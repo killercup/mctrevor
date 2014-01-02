@@ -41,7 +41,6 @@ gulp.task "clean", cleanPublic = ->
   gulp.src(destDir).pipe(clean())
 
 gulp.task "compile", compileScripts = ->
-  console.log "sup?"
   ee.interleave([
     gulp.src("client/js/**/*.coffee").pipe(coffee().on('error', gutil.log))
     gulp.src("client/js/**/*.js")
@@ -74,7 +73,6 @@ gulp.task "build", ['vendor', 'compile', 'templates'], ->
     copyVendor()
 
   gulp.watch "client/js/**/*", (event) ->
-    console.log "hi"
     compileScripts()
 
   gulp.watch "client/**/*.html", (event) ->
