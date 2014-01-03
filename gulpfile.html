@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en"><head><title>gulpfile</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="gulpfile"><meta name="groc-project-path" content="gulpfile.coffee"><meta name="groc-github-url" content="https://github.com/killercup/mctrevor"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/killercup/mctrevor/blob/master/gulpfile.coffee">gulpfile.coffee</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="compile-stuff-using-gulp">Compile Stuff Using Gulp</h1></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="requirements">Requirements</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">fs = <span class="built_in">require</span> <span class="string">'fs'</span>
+
+gulp = <span class="built_in">require</span> <span class="string">'gulp'</span>
+gutil = <span class="built_in">require</span> <span class="string">'gulp-util'</span>
+ee = <span class="built_in">require</span> <span class="string">'streamee'</span>
+
+coffee = <span class="built_in">require</span> <span class="string">'gulp-coffee'</span>
+concat = <span class="built_in">require</span> <span class="string">'gulp-concat'</span>
+clean = <span class="built_in">require</span> <span class="string">'gulp-clean'</span>
+uglify = <span class="built_in">require</span> <span class="string">'gulp-uglify'</span>
+template = <span class="built_in">require</span> <span class="string">'gulp-template'</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="constants">Constants</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="vendor-files-from-bower">Vendor Files from Bower</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">VENDOR_FILES_JS = [
+  <span class="string">"underscore/underscore-min.js"</span>
+  <span class="string">"jquery/jquery.min.js"</span>
+  <span class="string">"Eventable/eventable.js"</span>
+  <span class="string">"sir-trevor-js/sir-trevor.min.js"</span>
+]
+
+VENDOR_FILES_CSS = [
+  <span class="string">"sir-trevor-js/sir-trevor-icons.css"</span>
+  <span class="string">"sir-trevor-js/sir-trevor.css"</span>
+  <span class="string">"bootswatch/yeti/bootstrap.min.css"</span>
+]
+
+<span class="function"><span class="title">bowerPrefix</span> = <span class="params">(files)</span> -&gt;</span> files.map <span class="function"><span class="params">(f)</span> -&gt;</span> <span class="string">"bower_components/<span class="subst">#{f}</span>"</span>
+
+bowerPrefix<span class="function"><span class="params">(VENDOR_FILES_CSS.concat(VENDOR_FILES_JS))</span>.<span class="title">forEach</span> <span class="params">(f)</span> -&gt;</span>
+  <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Vendor file not found: <span class="subst">#{f}</span>"</span>) <span class="keyword">unless</span> fs.existsSync(f)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="paths">Paths</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">destDir = <span class="string">"./public/"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="tasks">Tasks</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="remove-previously-compiled-files">Remove previously compiled files</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">gulp.task <span class="string">"clean"</span>, <span class="function"><span class="title">cleanPublic</span> = -&gt;</span>
+  gulp.src(destDir).pipe(clean())</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="compile-jscoffee">Compile JS/Coffee</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">gulp.task <span class="string">"compile"</span>, <span class="function"><span class="title">compileScripts</span> = -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Uses <code>streamee</code> to combine Coffee file stream after compilation with JS
+file stream</p></div></div><div class="code"><div class="wrapper">  ee.interleave([
+    gulp.src(<span class="string">"client/js/**/*.coffee"</span>).pipe(coffee().<span class="literal">on</span>(<span class="string">'error'</span>, gutil.log))
+    gulp.src(<span class="string">"client/js/**/*.js"</span>)
+  ])
+  .pipe(concat(<span class="string">"app.js"</span>))
+  .pipe(uglify())
+  .pipe(gulp.dest(destDir))</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="concat-minify-files-from-bower-">Concat/Minify Files from <code>bower</code></h3></div></div><div class="code"><div class="wrapper">gulp.task <span class="string">"vendor"</span>, <span class="function"><span class="title">copyVendor</span> = -&gt;</span>
+  gulp.src(bowerPrefix VENDOR_FILES_JS)
+  .pipe(concat(<span class="string">"vendor.js"</span>))
+  .pipe(uglify())
+  .pipe(gulp.dest(destDir))
+
+  gulp.src(bowerPrefix VENDOR_FILES_CSS)
+  .pipe(concat(<span class="string">"vendor.css"</span>))
+  .pipe(gulp.dest(destDir))</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="process-html-files-using-lodash-underscore-templates">Process HTML files using <code>lodash</code>/<code>underscore</code> templates</h3></div></div><div class="code"><div class="wrapper">gulp.task <span class="string">"templates"</span>, <span class="function"><span class="title">renderTemplates</span> = -&gt;</span>
+  gulp.src(<span class="string">"client/**/*.html"</span>)
+  .pipe(template
+    <span class="attribute">js</span>: [<span class="string">"vendor.js"</span>, <span class="string">"app.js"</span>]
+    <span class="attribute">css</span>: [<span class="string">"vendor.css"</span>]
+  )
+  .pipe(gulp.dest(destDir))</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="combined-buildwatch-task">Combined build/watch task</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">gulp.task <span class="string">"build"</span>, [<span class="string">'clean'</span>, <span class="string">'vendor'</span>, <span class="string">'compile'</span>, <span class="string">'templates'</span>],<span class="function"> -&gt;</span>
+  vendorFiles = bowerPrefix VENDOR_FILES_CSS.concat(VENDOR_FILES_JS)
+  gulp.watch vendorFiles, <span class="function"><span class="params">(event)</span> -&gt;</span>
+    copyVendor()
+
+  gulp.watch <span class="string">"client/js/**/*"</span>, <span class="function"><span class="params">(event)</span> -&gt;</span>
+    compileScripts()
+
+  gulp.watch <span class="string">"client/**/*.html"</span>, <span class="function"><span class="params">(event)</span> -&gt;</span>
+    renderTemplates()</div></div></div></div></body></html>

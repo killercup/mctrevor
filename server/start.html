@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><title>server/start</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="server/start"><meta name="groc-project-path" content="server/start.coffee"><meta name="groc-github-url" content="https://github.com/killercup/mctrevor"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/killercup/mctrevor/blob/master/server/start.coffee">server/start.coffee</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="mc-trevor-server">MC Trevor Server</h1>
+<p>Currently implements the following features:</p>
+<ul>
+<li>Serve static assets</li>
+<li>List JSON files</li>
+<li>Send JSON files</li>
+<li>Create/Overwrite JSON file</li>
+</ul></div></div><div class="code"><div class="wrapper">express = <span class="built_in">require</span> <span class="string">'express'</span>
+
+fs = <span class="built_in">require</span> <span class="string">'fs-extra'</span>
+path = <span class="built_in">require</span> <span class="string">'path'</span>
+gs = <span class="built_in">require</span> <span class="string">'glob-stream'</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="paths">Paths</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">PUBLIC_PATH = path.normalize <span class="string">"<span class="subst">#{__dirname}</span>/../public"</span>
+FRONTEND_PATH = path.normalize <span class="string">"<span class="subst">#{__dirname}</span>/../frontend"</span>
+
+module.<span class="function"><span class="title">exports</span> = <span class="params">(port=<span class="number">1337</span>)</span> -&gt;</span>
+  app = express()
+
+  app.use express.logger(<span class="string">'dev'</span>)
+  app.use express.json()</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Serve assets</p></div></div><div class="code"><div class="wrapper">  app.use express.static PUBLIC_PATH</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="index-of-json-files">Index of JSON files</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">  app.get <span class="string">'/pages'</span>, <span class="function"><span class="params">(req, res)</span> -&gt;</span>
+    dataPath = <span class="string">"<span class="subst">#{FRONTEND_PATH}</span>/data"</span>
+    pages = []
+
+    pagesStream = gs.create(<span class="string">"**/*.json"</span>, <span class="attribute">cwd</span>: dataPath)
+    .<span class="literal">on</span> <span class="string">'data'</span>, <span class="function"><span class="params">(file)</span> -&gt;</span>
+      pages.push file.path.replace file.cwd, <span class="string">""</span>
+    .<span class="literal">on</span> <span class="string">'end'</span>,<span class="function"> -&gt;</span>
+      res.send <span class="number">200</span>, {<span class="attribute">pages</span>: pages}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="get-json-files">GET JSON files</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">  app.use <span class="string">'/pages'</span>, express.static <span class="string">"<span class="subst">#{FRONTEND_PATH}</span>/data"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="write-json-files">Write JSON files</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">  app.post <span class="regexp">/^\/pages\/(.*)$/</span>, <span class="function"><span class="params">(req, res)</span> -&gt;</span>
+    page = req.params[<span class="number">0</span>]
+    <span class="keyword">try</span>
+      <span class="keyword">throw</span> <span class="keyword">new</span> Error() <span class="keyword">unless</span> req.body?
+      <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Title missing"</span>) <span class="keyword">unless</span> req.body.title?
+      <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Content missing"</span>) <span class="keyword">unless</span> req.body.content?
+      body = JSON.stringify(req.body, <span class="literal">null</span>, <span class="number">2</span>)
+    <span class="keyword">catch</span> e
+      res.send <span class="number">406</span>, {<span class="attribute">status</span>: <span class="number">406</span>, <span class="attribute">msg</span>: e.message <span class="keyword">or</span> <span class="string">"Submit JSON you freak!"</span>}
+
+    fs.outputFile <span class="string">"<span class="subst">#{FRONTEND_PATH}</span>/data/<span class="subst">#{page}</span>"</span>, body, <span class="function"><span class="params">(err)</span> -&gt;</span>
+      <span class="keyword">if</span> err
+        console.error page
+        <span class="keyword">return</span> res.send <span class="number">500</span>, {<span class="attribute">status</span>: <span class="number">500</span>, <span class="attribute">msg</span>: <span class="string">"Error writing file."</span>}
+
+      res.send <span class="number">204</span>
+
+
+  app.listen(port, <span class="string">'127.0.0.1'</span>)
+  console.log <span class="string">"Started app on http://localhost:<span class="subst">#{port}</span>/"</span></div></div></div></div></body></html>
