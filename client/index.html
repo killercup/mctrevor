@@ -22,21 +22,41 @@
 
     <div class="row">
       <div class="col-lg-4">
-        <div id="pages" class="list-group"></div>
+        <form id="pages-add" class="panel">
+          <div class="input-group">
+            <input type="text" id="pages-add-title" class="form-control"
+              placeholder="Page URL (eg. `/test/example.json`)"/>
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-success">Create</button>
+            </span>
+          </div>
+        </form>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Pages</h4>
+          </div>
+          <div id="pages" class="list-group"></div>
+        </div>
       </div>
       <div class="col-lg-8">
-        <form id="trevor" class="hidden">
-          <p>
-            <a href="#/save" class="btn btn-success save">Save</a>
-          </p>
-          <div class="form-group">
-            <label for="page-title">Title</label>
-            <input class="form-control" id="page-title" placeholder="Enter page title"/>
+        <div id="alerts"></div>
+        <form id="trevor" class="hidden panel panel-default">
+          <div class="panel-heading">
+            <a href="#/save" class="btn btn-success btn-sm save">Save</a>
           </div>
-          <textarea id="trevor-instance"></textarea>
-          <p>
-            <a href="#/save" class="btn btn-success save">Save</a>
-          </p>
+          <div class="panel-body">
+            <p>
+              <code id="page-filename"></code>
+            </p>
+            <div class="form-group">
+              <label for="page-title">Title</label>
+              <input class="form-control" id="page-title" placeholder="Enter page title"/>
+            </div>
+            <textarea id="trevor-instance"></textarea>
+          </div>
+          <div class="panel-footer">
+            <a href="#/save" class="btn btn-success btn-sm save">Save</a>
+          </div>
         </form>
       </div>
     </div>

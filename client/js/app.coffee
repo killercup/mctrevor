@@ -1,22 +1,64 @@
+# # MC Trevor Frontend
 jQuery ($) ->
+  # ## DOM
   $loading = $('#loading')
+  $alerts = $('#alerts')
+
   $pages = $('#pages')
+  $addPage = $('#pages-add')
 
   $form = $('#trevor')
+  $pageFilename = $('#page-filename')
   $pageTitle = $('#page-title')
   $trevor = $('#trevor-instance')
-  trevor = window.trevor = null
 
+  # Trevor instance
+  trevor = {}
+
+  # ## Current Page
+  #
+  # Data Structure:
+  #
+  # ```json
+  # {
+  #   url: String,
+  #   data: {
+  #     title: String,
+  #     content: Array
+  #   }
+  # }
+  # ```
   currentPage = {}
 
-  $.getJSON("/pages")
-  .success (data) ->
-    pages = data.pages
-    $pages.append pages.map((page) ->
-      "<a class='list-group-item' href='#' data-edit='#{page}'>#{page}</a>"
-    ).join('')
-    $loading.addClass 'hidden'
+  # ## Helpers
+  editor = ->
+    # Destroy previous instance
+    trevor.destroy?()
+    $trevor.empty()
 
+    $pageTitle.val currentPage.data.title
+    $pageFilename.text currentPage.url
+    # Let there be Trevor
+    $trevor.val JSON.stringify data: currentPage.data.content
+    trevor = new SirTrevor.Editor
+      el: $trevor
+    $form.removeClass 'hidden'
+
+  showAlert = (content) ->
+    newAlert = $ content
+    setTimeout (-> newAlert.remove()), 2000
+    $alerts.prepend newAlert
+
+  # ## Load Pages
+  loadPages = ->
+    $.getJSON("/pages")
+    .success (data) ->
+      $pages.html data.pages.sort().map((page) ->
+        "<a class='list-group-item' href='#' data-edit='#{page}'>#{page}</a>"
+      ).join('')
+      $loading.addClass 'hidden'
+
+  # ## Select Page
   $pages.on 'click', 'a[data-edit]', (event) ->
     event.preventDefault()
     $pageLink = $(@)
@@ -27,13 +69,11 @@ jQuery ($) ->
     $.getJSON("/pages#{currentPage.url}")
     .success (data) ->
       currentPage.data = data
-      $pageTitle.val currentPage.data.title
-      # Let there be Trevor
-      $trevor.val JSON.stringify data: currentPage.data.content
-      trevor = new SirTrevor.Editor
-        el: $trevor
-      $form.removeClass 'hidden'
+      editor()
+    .fail (err) ->
+      window.alert(err)
 
+  # ## Save Page
   $form.on 'click', 'a.save', (event) ->
     event.preventDefault()
     return unless trevor? and currentPage.data?
@@ -51,17 +91,25 @@ jQuery ($) ->
       data: JSON.stringify currentPage.data
     )
     .success (res) ->
-      button = $form.find('.save').first()
-      button.next('.label').remove()
-      label = $ '<span class="label label-success label-big">Saved</span>'
-      setTimeout (-> label.remove()), 2000
-      button.after label
+      showAlert "<div class='alert alert-success'>Saved <em>#{currentPage.url}</em></div>"
+      if currentPage._new
+        loadPages()
     .fail (err) ->
       console.error err
+      showAlert "<div class='alert alert-danger'>Failed to save <em>#{currentPage.url}</em>!</div>"
 
-      button = $form.find('.save').first()
-      button.next('.label').remove()
-      label = $ '<span class="label label-error label-big">Failed!</span>'
-      setTimeout (-> label.remove()), 2000
-      button.after label
+  # ## Add Page
+  $addPage.on 'submit', (event) ->
+    event.preventDefault()
+    filename = $('#pages-add-title').val()
+    currentPage =
+      _new: true
+      url: filename
+      data:
+        title: ''
+        content: []
+    editor()
+
+  # ## Init
+  loadPages()
 

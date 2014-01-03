@@ -1,6 +1,6 @@
 express = require 'express'
 
-fs = require 'fs'
+fs = require 'fs-extra'
 path = require 'path'
 gs = require 'glob-stream'
 
@@ -27,8 +27,8 @@ module.exports = (port=1337) ->
 
   app.use '/pages', express.static "#{FRONTEND_PATH}/data"
 
-  app.post '/pages/:page', (req, res) ->
-    page = req.param 'page'
+  app.post /^\/pages\/(.*)$/, (req, res) ->
+    page = req.params[0]
     try
       throw new Error() unless req.body?
       throw new Error("Title missing") unless req.body.title?
@@ -37,8 +37,9 @@ module.exports = (port=1337) ->
     catch e
       res.send 400, {status: 400, msg: e.message or "Submit JSON you freak!"}
 
-    fs.writeFile "#{FRONTEND_PATH}/data/#{page}", body, (err) ->
+    fs.outputFile "#{FRONTEND_PATH}/data/#{page}", body, (err) ->
       if err
+        console.error page
         return res.send 500, {status: 500, msg: "Error writing file."}
 
       res.send 200, {status: 200, msg: "thx"}
