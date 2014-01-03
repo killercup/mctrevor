@@ -41,10 +41,14 @@ destDir = "./public/"
 
 # ## Tasks
 
+# ### Remove previously compiled files
 gulp.task "clean", cleanPublic = ->
   gulp.src(destDir).pipe(clean())
 
+# ### Compile JS/Coffee
 gulp.task "compile", compileScripts = ->
+  # Uses `streamee` to combine Coffee file stream after compilation with JS
+  # file stream
   ee.interleave([
     gulp.src("client/js/**/*.coffee").pipe(coffee().on('error', gutil.log))
     gulp.src("client/js/**/*.js")
@@ -53,6 +57,7 @@ gulp.task "compile", compileScripts = ->
   .pipe(uglify())
   .pipe(gulp.dest(destDir))
 
+# ### Concat/Minify Files from `bower`
 gulp.task "vendor", copyVendor = ->
   gulp.src(bowerPrefix VENDOR_FILES_JS)
   .pipe(concat("vendor.js"))
@@ -63,6 +68,7 @@ gulp.task "vendor", copyVendor = ->
   .pipe(concat("vendor.css"))
   .pipe(gulp.dest(destDir))
 
+# ### Process HTML files using `lodash`/`underscore` templates
 gulp.task "templates", renderTemplates = ->
   gulp.src("client/**/*.html")
   .pipe(template
@@ -71,7 +77,8 @@ gulp.task "templates", renderTemplates = ->
   )
   .pipe(gulp.dest(destDir))
 
-gulp.task "build", ['vendor', 'compile', 'templates'], ->
+# ### Combined build/watch task
+gulp.task "build", ['clean', 'vendor', 'compile', 'templates'], ->
   vendorFiles = bowerPrefix VENDOR_FILES_CSS.concat(VENDOR_FILES_JS)
   gulp.watch vendorFiles, (event) ->
     copyVendor()

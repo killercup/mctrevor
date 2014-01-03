@@ -15,11 +15,12 @@ jQuery ($) ->
   # Trevor instance
   trevor = {}
 
+  ###
   # ## Current Page
   #
   # Data Structure:
   #
-  # ```json
+  # @example ```json
   # {
   #   url: String,
   #   data: {
@@ -28,9 +29,11 @@ jQuery ($) ->
   #   }
   # }
   # ```
+  ###
   currentPage = {}
 
   # ## Helpers
+  # ### Reset editor
   editor = ->
     # Destroy previous instance
     trevor.destroy?()
@@ -44,12 +47,13 @@ jQuery ($) ->
       el: $trevor
     $form.removeClass 'hidden'
 
+  # ### Add an alert
   showAlert = (content) ->
     newAlert = $ content
     setTimeout (-> newAlert.remove()), 2000
     $alerts.prepend newAlert
 
-  # ## Load Pages
+  # ### Load Pages
   loadPages = ->
     $.getJSON("/pages")
     .success (data) ->

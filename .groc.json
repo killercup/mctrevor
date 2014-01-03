@@ -1,0 +1,26 @@
+{
+  "glob": [
+    "*.md",
+    "*.js",
+    "*.coffee",
+
+    "client/**/*.js",
+    "client/**/*.coffee",
+    "client/**/*.scss",
+    "client/**/*.md",
+
+    "server/**/*.js",
+    "server/**/*.coffee",
+    "server/**/*.scss",
+    "server/**/*.md",
+
+    "test/**/*.coffee",
+    "test/**/*.md"
+  ],
+  "except": [],
+  "index": "Readme.md",
+  "root": ".",
+  "out": "docs",
+  "silent": false,
+  "strip": []
+}
