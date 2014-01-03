@@ -1,6 +1,7 @@
 # # Compile Stuff Using Gulp
 
 # ## Requirements
+fs = require 'fs'
 
 gulp = require 'gulp'
 gutil = require 'gulp-util'
@@ -30,6 +31,9 @@ VENDOR_FILES_CSS = [
 ]
 
 bowerPrefix = (files) -> files.map (f) -> "bower_components/#{f}"
+
+bowerPrefix(VENDOR_FILES_CSS.concat(VENDOR_FILES_JS)).forEach (f) ->
+  throw new Error("Vendor file not found: #{f}") unless fs.existsSync(f)
 
 # ### Paths
 

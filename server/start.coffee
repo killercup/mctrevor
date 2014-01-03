@@ -35,7 +35,7 @@ module.exports = (port=1337) ->
       throw new Error("Content missing") unless req.body.content?
       body = JSON.stringify(req.body, null, 2)
     catch e
-      res.send 400, {status: 400, msg: e.msg or "Submit JSON you freak!"}
+      res.send 400, {status: 400, msg: e.message or "Submit JSON you freak!"}
 
     fs.writeFile "#{FRONTEND_PATH}/data/#{page}", body, (err) ->
       if err
