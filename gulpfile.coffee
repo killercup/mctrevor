@@ -77,8 +77,11 @@ gulp.task "templates", renderTemplates = ->
   )
   .pipe(gulp.dest(destDir))
 
+# ### Build task
+gulp.task "build", ['vendor', 'compile', 'templates'], ->
+
 # ### Combined build/watch task
-gulp.task "build", ['clean', 'vendor', 'compile', 'templates'], ->
+gulp.task "watch", ['build'], ->
   vendorFiles = bowerPrefix VENDOR_FILES_CSS.concat(VENDOR_FILES_JS)
   gulp.watch vendorFiles, (event) ->
     copyVendor()

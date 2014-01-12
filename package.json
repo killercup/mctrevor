@@ -6,7 +6,8 @@
   "scripts": {
     "bower": "bower install",
     "build": "gulp build --require coffee-script",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "gulp watch --require coffee-script",
+    "test": "echo \"Error: no test specified\"",
     "docs": "groc",
     "publish_docs": "groc --github"
   },
