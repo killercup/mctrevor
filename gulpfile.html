@@ -46,7 +46,7 @@ file stream</p></div></div><div class="code"><div class="wrapper">  ee.interleav
     <span class="attribute">js</span>: [<span class="string">"vendor.js"</span>, <span class="string">"app.js"</span>]
     <span class="attribute">css</span>: [<span class="string">"vendor.css"</span>]
   )
-  .pipe(gulp.dest(destDir))</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="combined-buildwatch-task">Combined build/watch task</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">gulp.task <span class="string">"build"</span>, [<span class="string">'clean'</span>, <span class="string">'vendor'</span>, <span class="string">'compile'</span>, <span class="string">'templates'</span>],<span class="function"> -&gt;</span>
+  .pipe(gulp.dest(destDir))</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="build-task">Build task</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">gulp.task <span class="string">"build"</span>, [<span class="string">'vendor'</span>, <span class="string">'compile'</span>, <span class="string">'templates'</span>],<span class="function"> -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="combined-buildwatch-task">Combined build/watch task</h3></div></div></div><div class="segment"><div class="code"><div class="wrapper">gulp.task <span class="string">"watch"</span>, [<span class="string">'build'</span>],<span class="function"> -&gt;</span>
   vendorFiles = bowerPrefix VENDOR_FILES_CSS.concat(VENDOR_FILES_JS)
   gulp.watch vendorFiles, <span class="function"><span class="params">(event)</span> -&gt;</span>
     copyVendor()
