@@ -8,8 +8,8 @@
     "build": "gulp build --require coffee-script",
     "watch": "gulp watch --require coffee-script",
     "test": "echo \"Error: no test specified\"",
-    "docs": "groc",
-    "publish_docs": "groc --github"
+    "docs": "grock",
+    "publish_docs": "grock --github"
   },
   "keywords": [
     "CMS",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "coffee-script": "~1.6.3",
     "gulp-coffee": "~1.2.4",
-    "gulp": "~3.2.2",
+    "gulp": "~3.3.0",
     "gulp-concat": "~2.1.5",
     "gulp-util": "~2.2.3",
     "streamee": "~0.5.3",
@@ -39,7 +39,7 @@
     "gulp-uglify": "~0.1.0",
     "gulp-template": "~0.1.0",
     "gulp-clean": "~0.1.3",
-    "groc": "git://github.com/killercup/groc#da6ff644c1596ff97ee3315f9461cc3c6ea43444"
+    "grock": "~0.2.5"
   },
   "dependencies": {
     "glob-stream": "~3.1.0",
