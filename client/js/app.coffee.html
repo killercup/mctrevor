@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MC Trevor Frontend - app.coffee</title>
+
+  <link rel="stylesheet" href="../../assets/style.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+  <meta name="groc-relative-root" content="../../"/>
+  <meta name="groc-document-path" content="client/js/app.coffee"/>
+  
+</head>
+<body>
+  <div id="file-area">
+    <div id="meta">
+      <code class="file-path">
+      
+        client/js/app.coffee
+      
+      </code>
+    </div>
+    <div id="document">
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h1 id="mc-trevor-frontend"><a href="#mc-trevor-frontend" class="anchor"></a>MC Trevor Frontend</h1></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">jQuery <span class="hljs-function"><span class="hljs-params">($)</span> -&gt;</span></div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="dom"><a href="#dom" class="anchor"></a>DOM</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  $loading = $(<span class="hljs-string">'#loading'</span>)
+  $alerts = $(<span class="hljs-string">'#alerts'</span>)
+
+  $pages = $(<span class="hljs-string">'#pages'</span>)
+  $addPage = $(<span class="hljs-string">'#pages-add'</span>)
+
+  $form = $(<span class="hljs-string">'#trevor'</span>)
+  $pageFilename = $(<span class="hljs-string">'#page-filename'</span>)
+  $pageTitle = $(<span class="hljs-string">'#page-title'</span>)
+  $trevor = $(<span class="hljs-string">'#trevor-instance'</span>)
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>Trevor instance</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  trevor = {}
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments doc-section">
+          <div class="wrapper"><h2 id="current-page"><a href="#current-page" class="anchor"></a>Current Page</h2><p>Data Structure:</p>
+<p>Example:</p>
+<pre><code class="lang-json">{
+    url: String,
+    data: {
+      title: String,
+      content: Array
+    }
+}
+</code></pre>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  currentPage = {}
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="helpers"><a href="#helpers" class="anchor"></a>Helpers</h2><h3 id="reset-editor"><a href="#reset-editor" class="anchor"></a>Reset editor</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-title">editor</span> = -&gt;</span></div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>Destroy previous instance</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">    trevor.destroy?()
+    $trevor.empty()
+
+    $pageTitle.val currentPage.data.title
+    $pageFilename.text currentPage.url</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>Let there be Trevor</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">    $trevor.val JSON.stringify <span class="hljs-attribute">data</span>: currentPage.data.content
+    trevor = <span class="hljs-keyword">new</span> SirTrevor.Editor
+      <span class="hljs-attribute">el</span>: $trevor
+    $form.removeClass <span class="hljs-string">'hidden'</span>
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="add-an-alert"><a href="#add-an-alert" class="anchor"></a>Add an alert</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-title">showAlert</span> = <span class="hljs-params">(content)</span> -&gt;</span>
+    newAlert = $ content
+    setTimeout (<span class="hljs-function">-&gt;</span> newAlert.remove()), <span class="hljs-number">2000</span>
+    $alerts.prepend newAlert
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="load-pages"><a href="#load-pages" class="anchor"></a>Load Pages</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-title">loadPages</span> = -&gt;</span>
+    $.getJSON(<span class="hljs-string">"/pages"</span>)
+    .success <span class="hljs-function"><span class="hljs-params">(data)</span> -&gt;</span>
+      $pages.html data.pages.sort<span class="hljs-function"><span class="hljs-params">()</span>.<span class="hljs-title">map</span><span class="hljs-params">((page) -&gt;
+        <span class="hljs-string">"&lt;a class='list-group-item' href='#' data-edit='<span class="hljs-subst">#{page}</span>'&gt;<span class="hljs-subst">#{page}</span>&lt;/a&gt;"</span>
+      )</span>.<span class="hljs-title">join</span><span class="hljs-params">(<span class="hljs-string">''</span>)</span>
+      <span class="hljs-title">$loading</span>.<span class="hljs-title">addClass</span> '<span class="hljs-title">hidden</span>'
+</span></div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="select-page"><a href="#select-page" class="anchor"></a>Select Page</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  $pages.<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-string">'a[data-edit]'</span>, <span class="hljs-function"><span class="hljs-params">(event)</span> -&gt;</span>
+    event.preventDefault()
+    $pageLink = $(@)
+    currentPage.url = $pageLink.data(<span class="hljs-string">'edit'</span>)
+    $pageLink.siblings().removeClass <span class="hljs-string">'active'</span>
+    $pageLink.addClass <span class="hljs-string">'active'</span>
+
+    $.getJSON(<span class="hljs-string">"/pages<span class="hljs-subst">#{currentPage.url}</span>"</span>)
+    .success <span class="hljs-function"><span class="hljs-params">(data)</span> -&gt;</span>
+      currentPage.data = data
+      editor()
+    .fail <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+      <span class="hljs-built_in">window</span>.alert(err)
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="save-page"><a href="#save-page" class="anchor"></a>Save Page</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  $form.<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-string">'a.save'</span>, <span class="hljs-function"><span class="hljs-params">(event)</span> -&gt;</span>
+    event.preventDefault()
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">unless</span> trevor? <span class="hljs-keyword">and</span> currentPage.data?
+
+    newContent = trevor.blocks.map <span class="hljs-function"><span class="hljs-params">(i)</span> -&gt;</span> i.saveAndReturnData()
+
+    currentPage.data.title = $pageTitle.val()
+    currentPage.data.content = newContent
+
+    $.ajax(
+      <span class="hljs-attribute">type</span>: <span class="hljs-string">'POST'</span>
+      <span class="hljs-attribute">url</span>: <span class="hljs-string">"/pages<span class="hljs-subst">#{currentPage.url}</span>"</span>
+      <span class="hljs-attribute">contentType</span>: <span class="hljs-string">"application/json"</span>
+      <span class="hljs-attribute">dataType</span>: <span class="hljs-string">"json"</span>
+      <span class="hljs-attribute">data</span>: JSON.stringify currentPage.data
+    )
+    .success <span class="hljs-function"><span class="hljs-params">(res)</span> -&gt;</span>
+      showAlert <span class="hljs-string">"&lt;div class='alert alert-success'&gt;Saved &lt;em&gt;<span class="hljs-subst">#{currentPage.url}</span>&lt;/em&gt;&lt;/div&gt;"</span>
+      <span class="hljs-keyword">if</span> currentPage._new
+        loadPages()
+    .fail <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+      <span class="hljs-built_in">console</span>.error err
+      showAlert <span class="hljs-string">"&lt;div class='alert alert-danger'&gt;Failed to save &lt;em&gt;<span class="hljs-subst">#{currentPage.url}</span>&lt;/em&gt;!&lt;/div&gt;"</span>
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="add-page"><a href="#add-page" class="anchor"></a>Add Page</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  $addPage.<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>, <span class="hljs-function"><span class="hljs-params">(event)</span> -&gt;</span>
+    event.preventDefault()
+    filename = $(<span class="hljs-string">'#pages-add-title'</span>).val()
+    currentPage =
+      <span class="hljs-attribute">_new</span>: <span class="hljs-literal">true</span>
+      <span class="hljs-attribute">url</span>: filename
+      <span class="hljs-attribute">data</span>:
+        <span class="hljs-attribute">title</span>: <span class="hljs-string">''</span>
+        <span class="hljs-attribute">content</span>: []
+    editor()
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="init"><a href="#init" class="anchor"></a>Init</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  loadPages()
+
+</div></div>
+      
+      </div>
+    
+    </div>
+  </div>
+
+  <script src="../../toc.js"></script>
+  <script src="../../assets/libs.js"></script>
+  <script src="../../assets/behavior.js"></script>
+</body>
+</html>

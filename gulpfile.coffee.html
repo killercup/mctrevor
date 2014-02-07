@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Compile Stuff Using Gulp - gulpfile.coffee</title>
+
+  <link rel="stylesheet" href="assets/style.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+  <meta name="groc-relative-root" content=""/>
+  <meta name="groc-document-path" content="gulpfile.coffee"/>
+  
+</head>
+<body>
+  <div id="file-area">
+    <div id="meta">
+      <code class="file-path">
+      
+        gulpfile.coffee
+      
+      </code>
+    </div>
+    <div id="document">
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h1 id="compile-stuff-using-gulp"><a href="#compile-stuff-using-gulp" class="anchor"></a>Compile Stuff Using Gulp</h1></div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="requirements"><a href="#requirements" class="anchor"></a>Requirements</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
+
+gulp = <span class="hljs-built_in">require</span> <span class="hljs-string">'gulp'</span>
+gutil = <span class="hljs-built_in">require</span> <span class="hljs-string">'gulp-util'</span>
+ee = <span class="hljs-built_in">require</span> <span class="hljs-string">'streamee'</span>
+
+coffee = <span class="hljs-built_in">require</span> <span class="hljs-string">'gulp-coffee'</span>
+concat = <span class="hljs-built_in">require</span> <span class="hljs-string">'gulp-concat'</span>
+clean = <span class="hljs-built_in">require</span> <span class="hljs-string">'gulp-clean'</span>
+uglify = <span class="hljs-built_in">require</span> <span class="hljs-string">'gulp-uglify'</span>
+template = <span class="hljs-built_in">require</span> <span class="hljs-string">'gulp-template'</span>
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="constants"><a href="#constants" class="anchor"></a>Constants</h2></div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="vendor-files-from-bower"><a href="#vendor-files-from-bower" class="anchor"></a>Vendor Files from Bower</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">VENDOR_FILES_JS = [
+  <span class="hljs-string">"underscore/underscore-min.js"</span>
+  <span class="hljs-string">"jquery/jquery.min.js"</span>
+  <span class="hljs-string">"Eventable/eventable.js"</span>
+  <span class="hljs-string">"sir-trevor-js/sir-trevor.min.js"</span>
+]
+
+VENDOR_FILES_CSS = [
+  <span class="hljs-string">"sir-trevor-js/sir-trevor-icons.css"</span>
+  <span class="hljs-string">"sir-trevor-js/sir-trevor.css"</span>
+  <span class="hljs-string">"bootswatch/yeti/bootstrap.min.css"</span>
+]
+
+<span class="hljs-function"><span class="hljs-title">bowerPrefix</span> = <span class="hljs-params">(files)</span> -&gt;</span> files.map <span class="hljs-function"><span class="hljs-params">(f)</span> -&gt;</span> <span class="hljs-string">"bower_components/<span class="hljs-subst">#{f}</span>"</span>
+
+bowerPrefix<span class="hljs-function"><span class="hljs-params">(VENDOR_FILES_CSS.concat(VENDOR_FILES_JS))</span>.<span class="hljs-title">forEach</span> <span class="hljs-params">(f)</span> -&gt;</span>
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Vendor file not found: <span class="hljs-subst">#{f}</span>"</span>) <span class="hljs-keyword">unless</span> fs.existsSync(f)
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="paths"><a href="#paths" class="anchor"></a>Paths</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">destDir = <span class="hljs-string">"./public/"</span>
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="tasks"><a href="#tasks" class="anchor"></a>Tasks</h2></div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="remove-previously-compiled-files"><a href="#remove-previously-compiled-files" class="anchor"></a>Remove previously compiled files</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">gulp.task <span class="hljs-string">"clean"</span>, <span class="hljs-function"><span class="hljs-title">cleanPublic</span> = -&gt;</span>
+  gulp.src(destDir).pipe(clean())
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="compile-js-coffee"><a href="#compile-js-coffee" class="anchor"></a>Compile JS/Coffee</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">gulp.task <span class="hljs-string">"compile"</span>, <span class="hljs-function"><span class="hljs-title">compileScripts</span> = -&gt;</span></div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>Uses <code>streamee</code> to combine Coffee file stream after compilation with JS
+file stream</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  ee.interleave([
+    gulp.src(<span class="hljs-string">"client/js/**/*.coffee"</span>).pipe(coffee().<span class="hljs-literal">on</span>(<span class="hljs-string">'error'</span>, gutil.log))
+    gulp.src(<span class="hljs-string">"client/js/**/*.js"</span>)
+  ])
+  .pipe(concat(<span class="hljs-string">"app.js"</span>))
+  .pipe(uglify())
+  .pipe(gulp.dest(destDir))
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="concat-minify-files-from-bower"><a href="#concat-minify-files-from-bower" class="anchor"></a>Concat/Minify Files from <code>bower</code></h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">gulp.task <span class="hljs-string">"vendor"</span>, <span class="hljs-function"><span class="hljs-title">copyVendor</span> = -&gt;</span>
+  gulp.src(bowerPrefix VENDOR_FILES_JS)
+  .pipe(concat(<span class="hljs-string">"vendor.js"</span>))
+  .pipe(uglify())
+  .pipe(gulp.dest(destDir))
+
+  gulp.src(bowerPrefix VENDOR_FILES_CSS)
+  .pipe(concat(<span class="hljs-string">"vendor.css"</span>))
+  .pipe(gulp.dest(destDir))
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="process-html-files-using-lodash-underscore-templates"><a href="#process-html-files-using-lodash-underscore-templates" class="anchor"></a>Process HTML files using <code>lodash</code>/<code>underscore</code> templates</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">gulp.task <span class="hljs-string">"templates"</span>, <span class="hljs-function"><span class="hljs-title">renderTemplates</span> = -&gt;</span>
+  gulp.src(<span class="hljs-string">"client/**/*.html"</span>)
+  .pipe(template
+    <span class="hljs-attribute">js</span>: [<span class="hljs-string">"vendor.js"</span>, <span class="hljs-string">"app.js"</span>]
+    <span class="hljs-attribute">css</span>: [<span class="hljs-string">"vendor.css"</span>]
+  )
+  .pipe(gulp.dest(destDir))
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="build-task"><a href="#build-task" class="anchor"></a>Build task</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">gulp.task <span class="hljs-string">"build"</span>, [<span class="hljs-string">'vendor'</span>, <span class="hljs-string">'compile'</span>, <span class="hljs-string">'templates'</span>],<span class="hljs-function"> -&gt;</span>
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="combined-build-watch-task"><a href="#combined-build-watch-task" class="anchor"></a>Combined build/watch task</h3></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">gulp.task <span class="hljs-string">"watch"</span>, [<span class="hljs-string">'build'</span>],<span class="hljs-function"> -&gt;</span>
+  vendorFiles = bowerPrefix VENDOR_FILES_CSS.concat(VENDOR_FILES_JS)
+  gulp.watch vendorFiles, <span class="hljs-function"><span class="hljs-params">(event)</span> -&gt;</span>
+    copyVendor()
+
+  gulp.watch <span class="hljs-string">"client/js/**/*"</span>, <span class="hljs-function"><span class="hljs-params">(event)</span> -&gt;</span>
+    compileScripts()
+
+  gulp.watch <span class="hljs-string">"client/**/*.html"</span>, <span class="hljs-function"><span class="hljs-params">(event)</span> -&gt;</span>
+    renderTemplates()
+</div></div>
+      
+      </div>
+    
+    </div>
+  </div>
+
+  <script src="toc.js"></script>
+  <script src="assets/libs.js"></script>
+  <script src="assets/behavior.js"></script>
+</body>
+</html>

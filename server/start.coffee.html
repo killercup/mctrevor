@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MC Trevor Server - start.coffee</title>
+
+  <link rel="stylesheet" href="../assets/style.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+  <meta name="groc-relative-root" content="../"/>
+  <meta name="groc-document-path" content="server/start.coffee"/>
+  
+</head>
+<body>
+  <div id="file-area">
+    <div id="meta">
+      <code class="file-path">
+      
+        server/start.coffee
+      
+      </code>
+    </div>
+    <div id="document">
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h1 id="mc-trevor-server"><a href="#mc-trevor-server" class="anchor"></a>MC Trevor Server</h1><p>Currently implements the following features:</p>
+<ul>
+<li>Serve static assets</li>
+<li>List JSON files</li>
+<li>Send JSON files</li>
+<li>Create/Overwrite JSON file</li>
+</ul>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">express = <span class="hljs-built_in">require</span> <span class="hljs-string">'express'</span>
+
+fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs-extra'</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">'path'</span>
+gs = <span class="hljs-built_in">require</span> <span class="hljs-string">'glob-stream'</span>
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="paths"><a href="#paths" class="anchor"></a>Paths</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">PUBLIC_PATH = path.normalize <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/../public"</span>
+FRONTEND_PATH = path.normalize <span class="hljs-string">"<span class="hljs-subst">#{__dirname}</span>/../frontend"</span>
+
+<span class="hljs-built_in">module</span>.<span class="hljs-function"><span class="hljs-title">exports</span> = <span class="hljs-params">(port=<span class="hljs-number">1337</span>)</span> -&gt;</span>
+  app = express()
+
+  app.use express.logger(<span class="hljs-string">'dev'</span>)
+  app.use express.json()
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>Serve assets</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  app.use express.static PUBLIC_PATH
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="index-of-json-files"><a href="#index-of-json-files" class="anchor"></a>Index of JSON files</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  app.get <span class="hljs-string">'/pages'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+    dataPath = <span class="hljs-string">"<span class="hljs-subst">#{FRONTEND_PATH}</span>/data"</span>
+    pages = []
+
+    pagesStream = gs.create(<span class="hljs-string">"**/*.json"</span>, <span class="hljs-attribute">cwd</span>: dataPath)
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(file)</span> -&gt;</span>
+      pages.push file.path.replace file.cwd, <span class="hljs-string">""</span>
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>,<span class="hljs-function"> -&gt;</span>
+      res.send <span class="hljs-number">200</span>, {<span class="hljs-attribute">pages</span>: pages}
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="get-json-files"><a href="#get-json-files" class="anchor"></a>GET JSON files</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  app.use <span class="hljs-string">'/pages'</span>, express.static <span class="hljs-string">"<span class="hljs-subst">#{FRONTEND_PATH}</span>/data"</span>
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="write-json-files"><a href="#write-json-files" class="anchor"></a>Write JSON files</h2></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  app.post <span class="hljs-regexp">/^\/pages\/(.*)$/</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+    page = req.params[<span class="hljs-number">0</span>]
+    <span class="hljs-keyword">try</span>
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error() <span class="hljs-keyword">unless</span> req.body?
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Title missing"</span>) <span class="hljs-keyword">unless</span> req.body.title?
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Content missing"</span>) <span class="hljs-keyword">unless</span> req.body.content?
+      body = JSON.stringify(req.body, <span class="hljs-literal">null</span>, <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">catch</span> e
+      res.send <span class="hljs-number">406</span>, {<span class="hljs-attribute">status</span>: <span class="hljs-number">406</span>, <span class="hljs-attribute">msg</span>: e.message <span class="hljs-keyword">or</span> <span class="hljs-string">"Submit JSON you freak!"</span>}
+
+    fs.outputFile <span class="hljs-string">"<span class="hljs-subst">#{FRONTEND_PATH}</span>/data/<span class="hljs-subst">#{page}</span>"</span>, body, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+      <span class="hljs-keyword">if</span> err
+        <span class="hljs-built_in">console</span>.error page
+        <span class="hljs-keyword">return</span> res.send <span class="hljs-number">500</span>, {<span class="hljs-attribute">status</span>: <span class="hljs-number">500</span>, <span class="hljs-attribute">msg</span>: <span class="hljs-string">"Error writing file."</span>}
+
+      res.send <span class="hljs-number">204</span>
+
+
+  app.listen(port, <span class="hljs-string">'127.0.0.1'</span>)
+  <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Started app on http://localhost:<span class="hljs-subst">#{port}</span>/"</span>
+</div></div>
+      
+      </div>
+    
+    </div>
+  </div>
+
+  <script src="../toc.js"></script>
+  <script src="../assets/libs.js"></script>
+  <script src="../assets/behavior.js"></script>
+</body>
+</html>
