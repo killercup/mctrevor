@@ -4,6 +4,10 @@ CMS based on [Sir Trevor JS](http://madebymany.github.io/sir-trevor-js/).
 
 The main goal is to create a CMS that stores its data in flat JSON files and renders to static HTML.
 
+See this [screenshot] for an illustration.
+
+[screenshot]: https://cloud.githubusercontent.com/assets/20063/2839657/0b4eedcc-d04a-11e3-9bc5-7d195da550f8.png
+
 ## Get started
 
 The only global dependency is `npm`, the rest is managed locally.
